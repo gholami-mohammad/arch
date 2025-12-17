@@ -11,7 +11,7 @@
 
 ---
 
-## 1. Control panel usable on desktop and mobile
+## Control panel usable on desktop and mobile
 
 ```mermaid
 sequenceDiagram
@@ -30,7 +30,7 @@ sequenceDiagram
 
 ---
 
-## 2. User login
+## User login
 
 ```mermaid
 sequenceDiagram
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ---
 
-## 3. User logout
+## User logout
 
 ```mermaid
 sequenceDiagram
@@ -73,7 +73,7 @@ sequenceDiagram
 
 ---
 
-## 4. Live view of mother service transactions
+## Live view of mother service transactions
 
 ```mermaid
 sequenceDiagram
@@ -94,7 +94,7 @@ sequenceDiagram
 
 ---
 
-## 5. Live view of test service transactions
+## Live view of test service transactions
 
 ```mermaid
 sequenceDiagram
@@ -115,7 +115,7 @@ sequenceDiagram
 
 ---
 
-## 6. Search in live panel (scenarios list)
+## Search in live panel
 
 ```mermaid
 sequenceDiagram
@@ -131,25 +131,9 @@ sequenceDiagram
 
 ---
 
-## 8. Sort scenarios in live panel
-
-```mermaid
-sequenceDiagram
-  actor Tester
-  participant Frontend as Control Panel UI
-  participant ControlPanel as Control Panel Service
-
-  Tester->>Frontend: Set sort by time asc/desc
-  Frontend->>ControlPanel: GET /scenarios?sort=time&order=asc|desc
-  ControlPanel-->>Frontend: 200 {items sorted}
-  Frontend-->>Tester: Render sorted list
-```
-
----
-
 # QA manager user stories sequence diagrams
 
-## 9. Create new user
+## Create new user
 
 ```mermaid
 sequenceDiagram
@@ -174,7 +158,7 @@ sequenceDiagram
 
 ---
 
-## 10. View users list
+## View users list
 
 ```mermaid
 sequenceDiagram
@@ -188,7 +172,7 @@ sequenceDiagram
   alt Data available
     Auth-->>Frontend: 200 [{name,email,status,role,createdAt}]
     Frontend-->>QA_Manager: Render list
-  else Empty or error
+  else Error
     Auth-->>Frontend: 4xx or 5xx
     Frontend->>Notification: Show error
   end
@@ -196,7 +180,7 @@ sequenceDiagram
 
 ---
 
-## 11. Edit user info
+## Edit user info
 
 ```mermaid
 sequenceDiagram
@@ -208,8 +192,8 @@ sequenceDiagram
   QA_Manager->>Frontend: Select user to edit
   Frontend->>Auth: GET /users/{id}
   Auth-->>Frontend: 200 {user data}
-  Frontend-->>QA_Manager: Show edit form (email read-only)
-  QA_Manager->>Frontend: Save changes {name,lastName,status,role}
+  Frontend-->>QA_Manager: Show edit form
+  QA_Manager->>Frontend: Save changes {firstName,lastName,email,status,role}
   Frontend->>Auth: PUT /users/{id} {payload}
   alt Save OK
     Auth-->>Frontend: 200 {updated}
@@ -223,7 +207,7 @@ sequenceDiagram
 
 ---
 
-## 12. Deactivate user
+## Deactivate user
 
 ```mermaid
 sequenceDiagram
@@ -249,7 +233,7 @@ sequenceDiagram
 
 ---
 
-## 13. Soft-delete user
+## Delete user
 
 ```mermaid
 sequenceDiagram
@@ -276,67 +260,7 @@ sequenceDiagram
 
 # QA manager and Tester user stories sequence diagrams
 
-## 14. Reports (manager)
-
-```mermaid
-sequenceDiagram
-  actor Tester as QA Manager or Tester
-  participant Frontend as Control Panel UI
-  participant Reporting as Control Panel Service
-  participant Notification as Toast
-
-  Tester->>Frontend: Open scenario results page
-  Frontend->>Reporting: GET /reports/scenarios?page=...&size=...
-  alt Data available
-    Reporting-->>Frontend: 200 [{runId,scenarioId,name,status,txTotal,txFailed,startTime,duration}]
-    Frontend-->>Tester: Render paginated table, sort enabled
-  else error
-    Reporting-->>Frontend: 4xx or 5xx
-    Frontend->>Notification: Show error
-  end
-```
-
----
-
-## 15. Filter and search in reports (manager)
-
-```mermaid
-sequenceDiagram
-  actor Tester as QA Manager or Tester
-  participant Frontend as Control Panel UI
-  participant Reporting as Control Panel Service
-
-  Tester->>Frontend: Apply filters {timeRange,status,nameOrId}
-  Frontend->>Reporting: GET /reports/scenarios?filters=...
-  Reporting-->>Frontend: 200 {filtered results}
-  Frontend-->>Tester: Update table without page reload
-```
-
----
-
-## 16. Export reports (manager)
-
-```mermaid
-sequenceDiagram
-  actor Tester as QA Manager or Tester
-  participant Frontend as Control Panel UI
-  participant Reporting as Control Panel Service
-  participant Notification as Toast
-
-  Tester->>Frontend: Click Export (CSV/JSON)
-  Frontend->>Reporting: POST /reports/export {filters, format}
-  alt Normal dataset
-    Reporting-->>Frontend: 200 {downloadUrl}
-    Frontend-->>Tester: Trigger download
-  else Large dataset (queued)
-    Reporting-->>Frontend: 202 {jobId, eta}
-    Frontend->>Notification: Show queued/export time estimate
-  end
-```
-
----
-
-## 17. Start scenario
+## Start scenario
 
 ```mermaid
 sequenceDiagram
@@ -359,7 +283,7 @@ sequenceDiagram
 
 ---
 
-## 18. Pause scenario
+## Pause scenario
 
 ```mermaid
 sequenceDiagram
@@ -382,7 +306,7 @@ sequenceDiagram
 
 ---
 
-## 19. Restart scenario
+## Restart scenario
 
 ```mermaid
 sequenceDiagram
@@ -400,15 +324,15 @@ sequenceDiagram
 
 ---
 
-## 20. Abort scenario
+## Abort scenario
 
 ```mermaid
 sequenceDiagram
   actor Tester as QA Manager or Tester
   participant Frontend as Control Panel UI
+  participant Notification as Confirm/Toast
   participant Scenario as Control Panel Service
   participant WebSocket as WebSocket Gateway
-  participant Notification as Confirm/Toast
 
   Tester->>Frontend: Click Abort
   Frontend->>Notification: Show confirm
@@ -421,7 +345,7 @@ sequenceDiagram
 
 ---
 
-## 21. Define mother/test services (Shared between starting mother service and test service)
+## Define mother/test services (Shared between starting mother service and test service)
 
 ### Part1
 
@@ -478,7 +402,7 @@ sequenceDiagram
     participant ControlPanelProvisioningChecker as Control Panel Provisioning checker
     participant Database as PostgreSQL
     participant K8S as Kubernetes
-
+  loop
     ControlPanelProvisioningChecker ->> Database : Load services with provisioning status
     ControlPanelProvisioningChecker ->> K8S: Check Mother/Test service running status
 
@@ -488,11 +412,12 @@ sequenceDiagram
     else Validation errors
         ControlPanelProvisioningChecker->>Database: Update status to failed
     end
+  end
 ```
 
 ---
 
-## 22. Mother/Test services list
+## Mother/Test services list
 
 ```mermaid
 sequenceDiagram
@@ -511,13 +436,14 @@ sequenceDiagram
 
 ---
 
-## 23. Mother/test service details
+## Mother/test service details
 
 ```mermaid
 sequenceDiagram
     actor Tester as QA Manager or Tester
     participant Frontend as Control Panel UI
     participant ControlPanelHTTP as Control Panel HTTP
+    participant Database as PostgreSQL
 
     Tester->>Frontend: Open mother/test service details
     Frontend->>ControlPanelHTTP: GET /services/{id}
@@ -529,30 +455,96 @@ sequenceDiagram
 
 ---
 
-# Review Pending
-
-## 26. Manage a specific test scenario
+## Define a test scenario
 
 ```mermaid
 sequenceDiagram
-  actor Tester as QA Manager or Tester
-  participant Frontend as Control Panel UI
-  participant Scenario as Control Panel Service
-  participant Test as Test Service
+  actor User as QA Manager / Tester
+  participant Frontend as Control Panel (UI)
+  participant ScenarioService as Control Panel HTTP
+  participant Notification as Toast/Error Handler
 
-  Tester->>Frontend: Open scenario management
-  Frontend->>Scenario: GET /scenarios/{id}
-  Scenario-->>Frontend: 200 {status,mother,tests,params}
-  Frontend-->>Tester: Show tests with status, error/delay params
-  Tester->>Frontend: Add test service / start / pause / delete
-  Frontend->>Scenario: POST/PATCH/DELETE actions
-  Scenario-->>Frontend: 200 {updated}
-  Frontend-->>Tester: Reflect changes
+  User->>Frontend: Open "Create Test Scenario" form
+  Frontend->>ScenarioService: GET /mother-services
+  alt At least one mother service exists
+    ScenarioService-->>Frontend: 200 [{id,name,...}]
+    Frontend-->>User: Show mother service selection
+    User->>Frontend: Fill scenario form (motherId, test services, params)
+    Frontend->>ScenarioService: POST /scenarios {motherId, testServices, params}
+    alt Valid data (error% 0-100, txCount>=0, runtime>=0, delay config OK)
+      ScenarioService-->>Frontend: 201 {scenarioId,status:created}
+      Frontend->>Notification: Show success message
+      Frontend-->>User: Scenario created and listed
+    else Invalid data (negative numbers, text instead of number, nulls, >500 services)
+      ScenarioService-->>Frontend: 422 {validationErrors}
+      Frontend->>Notification: Show error messages
+    end
+  else No mother service exists
+    ScenarioService-->>Frontend: 200 []
+    Frontend->>Notification: Show precondition error ("Define mother service first")
+  end
 ```
 
 ---
 
-## 27. View all test scenarios
+## Manage test scenarios
+
+```mermaid
+sequenceDiagram
+  actor User as QA Manager / Tester
+  participant Frontend as Control Panel (UI)
+  participant ScenarioService as Control Panel HTTP
+
+  User->>Frontend: Open "Manage Scenario" page
+  Frontend->>ScenarioService: GET /scenarios/{id}
+  ScenarioService-->>Frontend: 200 {scenarioId, status, motherId, testServices[]}
+  Frontend->>ScenarioService: GET /mother-services/{motherId}
+  ScenarioService-->>Frontend: 200 {motherName,status}
+  Frontend->>ScenarioService: GET /test-services?scenarioId={id}
+  ScenarioService-->>Frontend: 200 [{id,name,status,errorRate,delayPercent}]
+  Frontend-->>User: Show scenario details (status, mother, test services, params)
+
+```
+
+```mermaid
+sequenceDiagram
+  actor User as QA Manager / Tester
+  participant Frontend as Control Panel (UI)
+  participant ScenarioService as Control Panel HTTP
+
+  User->>Frontend: Start/Pause/Delete scenario
+  Frontend->>ScenarioService: POST /scenarios/{id}/action {start|pause|delete}
+  ScenarioService-->>Frontend: 200 {updatedStatus}
+  Frontend-->>User: Update scenario status
+
+  User->>Frontend: Start/Pause/Delete a test service
+  Frontend->>ScenarioService: POST /test-services/{id}/action {start|pause|delete}
+  ScenarioService-->>Frontend: 200 {updatedStatus}
+  Frontend-->>User: Update test service status
+```
+
+```mermaid
+sequenceDiagram
+  actor User as QA Manager / Tester
+  participant Frontend as Control Panel (UI)
+  participant ScenarioService as Control Panel HTTP
+  participant Notification as Toast/Error Handler
+
+
+  User->>Frontend: Add new test service
+  Frontend->>ScenarioService: POST /test-services {scenarioId, params}
+  alt Valid params
+    ScenarioService-->>Frontend: 201 {newService}
+    Frontend-->>User: Show new test service in list
+  else Invalid params
+    ScenarioService-->>Frontend: 422 {errors}
+    Frontend->>Notification: Show validation error
+  end
+```
+
+---
+
+## View all test scenarios
 
 ```mermaid
 sequenceDiagram
